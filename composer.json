@@ -13,6 +13,5 @@
     "psr-4": {"HtmlCacher\\": "src/"}
   },
   "require": {
-    "twig/twig": "^3.0"
   }
 }
