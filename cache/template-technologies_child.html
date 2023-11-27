@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<script>class RocketLazyLoadScripts{constructor(){this.v="1.2.3",this.triggerEvents=["keydown","mousedown","mousemove","touchmove","touchstart","touchend","wheel"],this.userEventHandler=this._triggerListener.bind(this),this.touchStartHandler=this._onTouchStart.bind(this),this.touchMoveHandler=this._onTouchMove.bind(this),this.touchEndHandler=this._onTouchEnd.bind(this),this.clickHandler=this._onClick.bind(this),this.interceptedClicks=[],window.addEventListener("pageshow",t=>{this.persisted=t.persisted}),window.addEventListener("DOMContentLoaded",()=>{this._preconnect3rdParties()}),this.delayedScripts={normal:[],async:[],defer:[]},this.trash=[],this.allJQueries=[]}_addUserInteractionListener(t){if(document.hidden){t._triggerListener();return}this.triggerEvents.forEach(e=>window.addEventListener(e,t.userEventHandler,{passive:!0})),window.addEventListener("touchstart",t.touchStartHandler,{passive:!0}),window.addEventListener("mousedown",t.touchStartHandler),document.addEventListener("visibilitychange",t.userEventHandler)}_removeUserInteractionListener(){this.triggerEvents.forEach(t=>window.removeEventListener(t,this.userEventHandler,{passive:!0})),document.removeEventListener("visibilitychange",this.userEventHandler)}_onTouchStart(t){"HTML"!==t.target.tagName&&(window.addEventListener("touchend",this.touchEndHandler),window.addEventListener("mouseup",this.touchEndHandler),window.addEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.addEventListener("mousemove",this.touchMoveHandler),t.target.addEventListener("click",this.clickHandler),this._renameDOMAttribute(t.target,"onclick","rocket-onclick"),this._pendingClickStarted())}_onTouchMove(t){window.removeEventListener("touchend",this.touchEndHandler),window.removeEventListener("mouseup",this.touchEndHandler),window.removeEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.removeEventListener("mousemove",this.touchMoveHandler),t.target.removeEventListener("click",this.clickHandler),this._renameDOMAttribute(t.target,"rocket-onclick","onclick"),this._pendingClickFinished()}_onTouchEnd(t){window.removeEventListener("touchend",this.touchEndHandler),window.removeEventListener("mouseup",this.touchEndHandler),window.removeEventListener("touchmove",this.touchMoveHandler,{passive:!0}),window.removeEventListener("mousemove",this.touchMoveHandler)}_onClick(t){t.target.removeEventListener("click",this.clickHandler),this._renameDOMAttribute(t.target,"rocket-onclick","onclick"),this.interceptedClicks.push(t),t.preventDefault(),t.stopPropagation(),t.stopImmediatePropagation(),this._pendingClickFinished()}_replayClicks(){window.removeEventListener("touchstart",this.touchStartHandler,{passive:!0}),window.removeEventListener("mousedown",this.touchStartHandler),this.interceptedClicks.forEach(t=>{t.target.dispatchEvent(new MouseEvent("click",{view:t.view,bubbles:!0,cancelable:!0}))})}_waitForPendingClicks(){return new Promise(t=>{this._isClickPending?this._pendingClickFinished=t:t()})}_pendingClickStarted(){this._isClickPending=!0}_pendingClickFinished(){this._isClickPending=!1}_renameDOMAttribute(t,e,r){t.hasAttribute&&t.hasAttribute(e)&&(event.target.setAttribute(r,event.target.getAttribute(e)),event.target.removeAttribute(e))}_triggerListener(){this._removeUserInteractionListener(this),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",this._loadEverythingNow.bind(this)):this._loadEverythingNow()}_preconnect3rdParties(){let t=[];document.querySelectorAll("script[type=rocketlazyloadscript]").forEach(e=>{if(e.hasAttribute("src")){let r=new URL(e.src).origin;r!==location.origin&&t.push({src:r,crossOrigin:e.crossOrigin||"module"===e.getAttribute("data-rocket-type")})}}),t=[...new Map(t.map(t=>[JSON.stringify(t),t])).values()],this._batchInjectResourceHints(t,"preconnect")}async _loadEverythingNow(){this.lastBreath=Date.now(),this._delayEventListeners(this),this._delayJQueryReady(this),this._handleDocumentWrite(),this._registerAllDelayedScripts(),this._preloadAllScripts(),await this._loadScriptsFromList(this.delayedScripts.normal),await this._loadScriptsFromList(this.delayedScripts.defer),await this._loadScriptsFromList(this.delayedScripts.async);try{await this._triggerDOMContentLoaded(),await this._triggerWindowLoad()}catch(t){console.error(t)}window.dispatchEvent(new Event("rocket-allScriptsLoaded")),this._waitForPendingClicks().then(()=>{this._replayClicks()}),this._emptyTrash()}_registerAllDelayedScripts(){document.querySelectorAll("script[type=rocketlazyloadscript]").forEach(t=>{t.hasAttribute("data-rocket-src")?t.hasAttribute("async")&&!1!==t.async?this.delayedScripts.async.push(t):t.hasAttribute("defer")&&!1!==t.defer||"module"===t.getAttribute("data-rocket-type")?this.delayedScripts.defer.push(t):this.delayedScripts.normal.push(t):this.delayedScripts.normal.push(t)})}async _transformScript(t){return new Promise((await this._littleBreath(),navigator.userAgent.indexOf("Firefox/")>0||""===navigator.vendor)?e=>{let r=document.createElement("script");[...t.attributes].forEach(t=>{let e=t.nodeName;"type"!==e&&("data-rocket-type"===e&&(e="type"),"data-rocket-src"===e&&(e="src"),r.setAttribute(e,t.nodeValue))}),t.text&&(r.text=t.text),r.hasAttribute("src")?(r.addEventListener("load",e),r.addEventListener("error",e)):(r.text=t.text,e());try{t.parentNode.replaceChild(r,t)}catch(i){e()}}:async e=>{function r(){t.setAttribute("data-rocket-status","failed"),e()}try{let i=t.getAttribute("data-rocket-type"),n=t.getAttribute("data-rocket-src");t.text,i?(t.type=i,t.removeAttribute("data-rocket-type")):t.removeAttribute("type"),t.addEventListener("load",function r(){t.setAttribute("data-rocket-status","executed"),e()}),t.addEventListener("error",r),n?(t.removeAttribute("data-rocket-src"),t.src=n):t.src="data:text/javascript;base64,"+window.btoa(unescape(encodeURIComponent(t.text)))}catch(s){r()}})}async _loadScriptsFromList(t){let e=t.shift();return e&&e.isConnected?(await this._transformScript(e),this._loadScriptsFromList(t)):Promise.resolve()}_preloadAllScripts(){this._batchInjectResourceHints([...this.delayedScripts.normal,...this.delayedScripts.defer,...this.delayedScripts.async],"preload")}_batchInjectResourceHints(t,e){var r=document.createDocumentFragment();t.forEach(t=>{let i=t.getAttribute&&t.getAttribute("data-rocket-src")||t.src;if(i){let n=document.createElement("link");n.href=i,n.rel=e,"preconnect"!==e&&(n.as="script"),t.getAttribute&&"module"===t.getAttribute("data-rocket-type")&&(n.crossOrigin=!0),t.crossOrigin&&(n.crossOrigin=t.crossOrigin),t.integrity&&(n.integrity=t.integrity),r.appendChild(n),this.trash.push(n)}}),document.head.appendChild(r)}_delayEventListeners(t){let e={};function r(t,r){!function t(r){!e[r]&&(e[r]={originalFunctions:{add:r.addEventListener,remove:r.removeEventListener},eventsToRewrite:[]},r.addEventListener=function(){arguments[0]=i(arguments[0]),e[r].originalFunctions.add.apply(r,arguments)},r.removeEventListener=function(){arguments[0]=i(arguments[0]),e[r].originalFunctions.remove.apply(r,arguments)});function i(t){return e[r].eventsToRewrite.indexOf(t)>=0?"rocket-"+t:t}}(t),e[t].eventsToRewrite.push(r)}function i(t,e){let r=t[e];Object.defineProperty(t,e,{get:()=>r||function(){},set(i){t["rocket"+e]=r=i}})}r(document,"DOMContentLoaded"),r(window,"DOMContentLoaded"),r(window,"load"),r(window,"pageshow"),r(document,"readystatechange"),i(document,"onreadystatechange"),i(window,"onload"),i(window,"onpageshow")}_delayJQueryReady(t){let e;function r(r){if(r&&r.fn&&!t.allJQueries.includes(r)){r.fn.ready=r.fn.init.prototype.ready=function(e){return t.domReadyFired?e.bind(document)(r):document.addEventListener("rocket-DOMContentLoaded",()=>e.bind(document)(r)),r([])};let i=r.fn.on;r.fn.on=r.fn.init.prototype.on=function(){if(this[0]===window){function t(t){return t.split(" ").map(t=>"load"===t||0===t.indexOf("load.")?"rocket-jquery-load":t).join(" ")}"string"==typeof arguments[0]||arguments[0]instanceof String?arguments[0]=t(arguments[0]):"object"==typeof arguments[0]&&Object.keys(arguments[0]).forEach(e=>{let r=arguments[0][e];delete arguments[0][e],arguments[0][t(e)]=r})}return i.apply(this,arguments),this},t.allJQueries.push(r)}e=r}r(window.jQuery),Object.defineProperty(window,"jQuery",{get:()=>e,set(t){r(t)}})}async _triggerDOMContentLoaded(){this.domReadyFired=!0,await this._littleBreath(),document.dispatchEvent(new Event("rocket-DOMContentLoaded")),await this._littleBreath(),window.dispatchEvent(new Event("rocket-DOMContentLoaded")),await this._littleBreath(),document.dispatchEvent(new Event("rocket-readystatechange")),await this._littleBreath(),document.rocketonreadystatechange&&document.rocketonreadystatechange()}async _triggerWindowLoad(){await this._littleBreath(),window.dispatchEvent(new Event("rocket-load")),await this._littleBreath(),window.rocketonload&&window.rocketonload(),await this._littleBreath(),this.allJQueries.forEach(t=>t(window).trigger("rocket-jquery-load")),await this._littleBreath();let t=new Event("rocket-pageshow");t.persisted=this.persisted,window.dispatchEvent(t),await this._littleBreath(),window.rocketonpageshow&&window.rocketonpageshow({persisted:this.persisted})}_handleDocumentWrite(){let t=new Map;document.write=document.writeln=function(e){let r=document.currentScript;r||console.error("WPRocket unable to document.write this: "+e);let i=document.createRange(),n=r.parentElement,s=t.get(r);void 0===s&&(s=r.nextSibling,t.set(r,s));let a=document.createDocumentFragment();i.setStart(a,0),a.appendChild(i.createContextualFragment(e)),n.insertBefore(a,s)}}async _littleBreath(){Date.now()-this.lastBreath>45&&(await this._requestAnimFrame(),this.lastBreath=Date.now())}async _requestAnimFrame(){return document.hidden?new Promise(t=>setTimeout(t)):new Promise(t=>requestAnimationFrame(t))}_emptyTrash(){this.trash.forEach(t=>t.remove())}static run(){let t=new RocketLazyLoadScripts;t._addUserInteractionListener(t)}}RocketLazyLoadScripts.run();</script>
+
+	<!-- Set up Meta -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta charset="UTF-8">
+
+	<!-- Set the viewport width to device width for mobile -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
+	<!-- Remove Microsoft Edge's & Safari phone-email styling -->
+	<meta name="format-detection" content="telephone=no,email=no,url=no">
+	<link rel="preload" fetchpriority="high" as="image" href="https://academysmart.com/wp-content/themes/academysmart/assets/images/get-whitepaper.svg" type="image/svg+xml">
+	<meta name='robots' content='noindex, nofollow' />
+
+	<!-- This site is optimized with the Yoast SEO plugin v21.5 - https://yoast.com/wordpress/plugins/seo/ -->
+	<title>Moodle - Academy SMART</title>
+	<meta name="description" content="Moodle – Technologie of Academy SMART – IT company with expertise in IT outstaffing, E-learning, cloud tech services, mobile and web development. We provide personal software solutions for business." class="yoast-seo-meta-tag" />
+	<meta property="og:locale" content="en_US" class="yoast-seo-meta-tag" />
+	<meta property="og:type" content="article" class="yoast-seo-meta-tag" />
+	<meta property="og:title" content="Moodle - Academy SMART" class="yoast-seo-meta-tag" />
+	<meta property="og:description" content="Moodle – Technologie of Academy SMART – IT company with expertise in IT outstaffing, E-learning, cloud tech services, mobile and web development. We provide personal software solutions for business." class="yoast-seo-meta-tag" />
+	<meta property="og:url" content="http://twigasmart.local/technologies/moodle/" class="yoast-seo-meta-tag" />
+	<meta property="og:site_name" content="Academy SMART" class="yoast-seo-meta-tag" />
+	<meta property="article:modified_time" content="2022-11-29T18:09:55+00:00" class="yoast-seo-meta-tag" />
+	<meta name="twitter:card" content="summary_large_image" class="yoast-seo-meta-tag" />
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel="alternate" type="application/rss+xml" title="Academy SMART &raquo; Feed" href="http://twigasmart.local/feed/" />
+<link rel='stylesheet' id='wpcode-admin-bar-css-css' href='http://twigasmart.local/app/plugins/insert-headers-and-footers/build/admin-bar.css?ver=5d377aa89c93914bb91207685348f326' media='all' />
+<link rel='stylesheet' id='dashicons-css' href='http://twigasmart.local/wp/wp-includes/css/dashicons.css?ver=6.4.1' media='all' />
+<link rel='stylesheet' id='admin-bar-css' href='http://twigasmart.local/wp/wp-includes/css/admin-bar.css?ver=6.4.1' media='all' />
+<style id='admin-bar-inline-css'>
+@media print { #wpadminbar { display:none; } }
+</style>
+<style id='global-styles-inline-css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flow > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}body .is-layout-flow > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}body .is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}body .is-layout-constrained > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}body .is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}body .is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}body .is-layout-flex{flex-wrap: wrap;align-items: center;}body .is-layout-flex > *{margin: 0;}body .is-layout-grid{display: grid;}body .is-layout-grid > *{margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+.wp-block-navigation a:where(:not(.wp-element-button)){color: inherit;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+.wp-block-pullquote{font-size: 1.5em;line-height: 1.6;}
+</style>
+<link rel='stylesheet' id='yoast-seo-adminbar-css' href='http://twigasmart.local/app/plugins/wordpress-seo/css/dist/adminbar-2150.css' media='all' />
+<link rel='stylesheet' id='cookie-notice-front-css' href='http://twigasmart.local/app/plugins/cookie-notice/css/front.css?ver=2.4.11' media='all' />
+<link rel='stylesheet' id='custom-css' href='http://twigasmart.local/app/themes/academysmart/assets/css/custom.css' media='all' />
+<link rel='stylesheet' id='style-css' href='http://twigasmart.local/app/themes/academysmart/style.css' media='all' />
+<link rel="https://api.w.org/" href="http://twigasmart.local/wp-json/" /><link rel="alternate" type="application/json" href="http://twigasmart.local/wp-json/wp/v2/pages/3036" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://twigasmart.local/wp/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 6.4.1" />
+<link rel='shortlink' href='http://twigasmart.local/?p=3036' />
+<link rel="alternate" type="application/json+oembed" href="http://twigasmart.local/wp-json/oembed/1.0/embed?url=http%3A%2F%2Ftwigasmart.local%2Ftechnologies%2Fmoodle%2F" />
+<link rel="alternate" type="text/xml+oembed" href="http://twigasmart.local/wp-json/oembed/1.0/embed?url=http%3A%2F%2Ftwigasmart.local%2Ftechnologies%2Fmoodle%2F&#038;format=xml" />
+<style type='text/css'>body.admin-bar {margin-top:32px !important}@media screen and (max-width: 782px) {body.admin-bar { margin-top:46px !important }}</style>
+
+<!-- This site is optimized with the Schema plugin v1.7.9.5 - https://schema.press -->
+<script type="application/ld+json">{"@context":"https:\/\/schema.org\/","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/twigasmart.local\/technologies\/moodle\/"},"url":"http:\/\/twigasmart.local\/technologies\/moodle\/","headline":"Moodle","datePublished":"2022-11-29T13:06:31+00:00","dateModified":"2022-11-29T18:09:55+00:00","publisher":{"@type":"Organization","@id":"http:\/\/twigasmart.local\/#organization","name":"Academy SMART","logo":{"@type":"ImageObject","url":"","width":600,"height":60}},"author":{"@type":"Person","name":"academy_admin","url":"http:\/\/twigasmart.local\/author\/academy_admin\/","image":{"@type":"ImageObject","url":"http:\/\/0.gravatar.com\/avatar\/007d1f71222b5b8d8b031f461cf7b20e?s=96&d=mm&r=g","height":96,"width":96},"sameAs":["https:\/\/main-academysmart.local"]}}</script>
+
+	<style type="text/css">
+		/* admin bar */
+		.schema_google_developers a {
+			padding-left:20px !important;
+			background:	transparent url('http://twigasmart.local/app/plugins/schema/assets/images/admin-bar/google-developers.png') 8px 50% no-repeat !important;
+		}
+		.schema_google_developers a:hover {
+			background:	transparent url('http://twigasmart.local/app/plugins/schema/assets/images/admin-bar/google-developers-hover.png') 8px 50% no-repeat !important;
+		}
+	</style>
+
+			<style type='text/css'>
+				body.admin-bar {margin-top:32px !important}
+				@media screen and (max-width: 782px) {
+					body.admin-bar { margin-top:46px !important }
+				}
+			</style>
+			<link rel="icon" href="http://twigasmart.local/app/uploads/2023/01/favicon.png" sizes="32x32" />
+<link rel="icon" href="http://twigasmart.local/app/uploads/2023/01/favicon.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="http://twigasmart.local/app/uploads/2023/01/favicon.png" />
+<meta name="msapplication-TileImage" content="http://twigasmart.local/app/uploads/2023/01/favicon.png" />
+
+	<!-- Google Tag Manager -->
+    <script type="rocketlazyloadscript">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+         j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-5Q9S54Z');
+	</script>
+    <!-- End Google Tag Manager -->
+
+    <!-- Google tag (gtag.js) -->
+    <script type="rocketlazyloadscript" data-rocket-src="https://www.googletagmanager.com/gtag/js?id=G-YXQP90Q9R6" defer></script>
+    <script type="rocketlazyloadscript">
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-YXQP90Q9R6');
+    </script>
+    <!-- Google tag (gtag.js) -->
+</head>
+
+<body class="page-template page-template-templates page-template-template-technologies_child page-template-templatestemplate-technologies_child-php page page-id-3036 page-child parent-pageid-2905 logged-in admin-bar no-customize-support wp-custom-logo no-outline cookies-set cookies-accepted">
+<script>
+		(function() {
+			var request, b = document.body, c = 'className', cs = 'customize-support', rcs = new RegExp('(^|\\s+)(no-)?'+cs+'(\\s+|$)');
+
+				request = true;
+	
+			b[c] = b[c].replace( rcs, ' ' );
+			// The customizer requires postMessage and CORS (if the site is cross domain).
+			b[c] += ( window.postMessage && request ? ' ' : ' no-' ) + cs;
+		}());
+	
+</script>
+		<div id="wpadminbar" class="nojq nojs">
+						<div class="quicklinks" id="wp-toolbar" role="navigation" aria-label="Toolbar">
+				<ul id='wp-admin-bar-root-default' class="ab-top-menu"><li id='wp-admin-bar-wp-logo' class="menupop"><a class='ab-item' aria-haspopup="true" href='http://twigasmart.local/wp/wp-admin/about.php'><span class="ab-icon" aria-hidden="true"></span><span class="screen-reader-text">About WordPress</span></a><div class="ab-sub-wrapper"><ul id='wp-admin-bar-wp-logo-default' class="ab-submenu"><li id='wp-admin-bar-about'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/about.php'>About WordPress</a></li><li id='wp-admin-bar-contribute'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/contribute.php'>Get Involved</a></li></ul><ul id='wp-admin-bar-wp-logo-external' class="ab-sub-secondary ab-submenu"><li id='wp-admin-bar-wporg'><a class='ab-item' href='https://wordpress.org/'>WordPress.org</a></li><li id='wp-admin-bar-documentation'><a class='ab-item' href='https://wordpress.org/documentation/'>Documentation</a></li><li id='wp-admin-bar-learn'><a class='ab-item' href='https://learn.wordpress.org/'>Learn WordPress</a></li><li id='wp-admin-bar-support-forums'><a class='ab-item' href='https://wordpress.org/support/forums/'>Support</a></li><li id='wp-admin-bar-feedback'><a class='ab-item' href='https://wordpress.org/support/forum/requests-and-feedback'>Feedback</a></li></ul></div></li><li id='wp-admin-bar-site-name' class="menupop"><a class='ab-item' aria-haspopup="true" href='http://twigasmart.local/wp/wp-admin/'>Academy SMART</a><div class="ab-sub-wrapper"><ul id='wp-admin-bar-site-name-default' class="ab-submenu"><li id='wp-admin-bar-dashboard'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/'>Dashboard</a></li></ul><ul id='wp-admin-bar-appearance' class="ab-submenu"><li id='wp-admin-bar-themes'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/themes.php'>Themes</a></li><li id='wp-admin-bar-widgets'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/widgets.php'>Widgets</a></li><li id='wp-admin-bar-menus'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/nav-menus.php'>Menus</a></li><li id='wp-admin-bar-background' class="hide-if-customize"><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/themes.php?page=custom-background'>Background</a></li><li id='wp-admin-bar-header' class="hide-if-customize"><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/themes.php?page=custom-header'>Header</a></li></ul></div></li><li id='wp-admin-bar-customize' class="hide-if-no-customize"><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/customize.php?url=http%3A%2F%2Ftwigasmart.local%2Ftechnologies%2Fmoodle%2F'>Customize</a></li><li id='wp-admin-bar-updates'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/update-core.php'><span class="ab-icon" aria-hidden="true"></span><span class="ab-label" aria-hidden="true">2</span><span class="screen-reader-text updates-available-text">2 updates available</span></a></li><li id='wp-admin-bar-comments'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/edit-comments.php'><span class="ab-icon" aria-hidden="true"></span><span class="ab-label awaiting-mod pending-count count-311" aria-hidden="true">311</span><span class="screen-reader-text comments-in-moderation-text">311 Comments in moderation</span></a></li><li id='wp-admin-bar-new-content' class="menupop"><a class='ab-item' aria-haspopup="true" href='http://twigasmart.local/wp/wp-admin/post-new.php'><span class="ab-icon" aria-hidden="true"></span><span class="ab-label">New</span></a><div class="ab-sub-wrapper"><ul id='wp-admin-bar-new-content-default' class="ab-submenu"><li id='wp-admin-bar-new-post'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/post-new.php'>Post</a></li><li id='wp-admin-bar-new-media'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/media-new.php'>Media</a></li><li id='wp-admin-bar-new-page'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/post-new.php?post_type=page'>Page</a></li><li id='wp-admin-bar-new-cases'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/post-new.php?post_type=cases'>Case Study</a></li><li id='wp-admin-bar-new-portfolios'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/post-new.php?post_type=portfolios'>Portfolio</a></li><li id='wp-admin-bar-new-whitepapers'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/post-new.php?post_type=whitepapers'>Whitepaper</a></li><li id='wp-admin-bar-new-vacancies'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/post-new.php?post_type=vacancies'>Vacancy</a></li><li id='wp-admin-bar-new-user'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/user-new.php'>User</a></li></ul></div></li><li id='wp-admin-bar-wpseo-menu' class="menupop"><a class='ab-item' aria-haspopup="true" href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpseo_dashboard'><div id="yoast-ab-icon" class="ab-item yoast-logo svg"><span class="screen-reader-text">SEO</span></div><div aria-hidden="true" title="Focus keyphrase not set" class="wpseo-score-icon bad adminbar-seo-score"><span class="wpseo-score-text screen-reader-text">Focus keyphrase not set</span></div></a><div class="ab-sub-wrapper"><ul id='wp-admin-bar-wpseo-menu-default' class="ab-submenu"><li id='wp-admin-bar-wpseo-seo-focus-keyword'><div class="ab-item ab-empty-item" tabindex="0">Focus keyphrase: <span class="wpseo-focus-keyword">not set</span></div></li><li id='wp-admin-bar-wpseo-seo-score'><div class="ab-item ab-empty-item" tabindex="0">SEO score: <div aria-hidden="true" title="Focus keyphrase not set" class="wpseo-score-icon bad adminbar-sub-menu-score"><span class="wpseo-score-text screen-reader-text">Focus keyphrase not set</span></div></div></li><li id='wp-admin-bar-wpseo-readability-score'><div class="ab-item ab-empty-item" tabindex="0">Readability: <div aria-hidden="true" title="Not available" class="wpseo-score-icon na adminbar-sub-menu-score"><span class="wpseo-score-text screen-reader-text">Not available</span></div></div></li><li id='wp-admin-bar-wpseo-frontend-inspector'><a class='ab-item' tabindex="0" href='https://yoa.st/admin-bar-frontend-inspector?php_version=8.1&#038;platform=wordpress&#038;platform_version=6.4.1&#038;software=free&#038;software_version=21.5&#038;days_active=357&#038;user_language=en_US' target='_blank'>Front-end SEO inspector<span class="yoast-badge yoast-premium-badge" id="wpseo-frontend-inspector-badge-premium-badge">Premium</span></a></li><li id='wp-admin-bar-wpseo-sub-tools' class="menupop"><div class="ab-item ab-empty-item" tabindex="0" aria-haspopup="true"><span class="wp-admin-bar-arrow" aria-hidden="true"></span>SEO Tools</div><div class="ab-sub-wrapper"><ul id='wp-admin-bar-wpseo-sub-tools-default' class="ab-submenu"><li id='wp-admin-bar-wpseo-semrush'><a class='ab-item' href='https://yoa.st/admin-bar-semrush?php_version=8.1&#038;platform=wordpress&#038;platform_version=6.4.1&#038;software=free&#038;software_version=21.5&#038;days_active=357&#038;user_language=en_US' target='_blank'>Semrush</a></li><li id='wp-admin-bar-wpseo-wincher'><a class='ab-item' href='https://yoa.st/admin-bar-wincher?php_version=8.1&#038;platform=wordpress&#038;platform_version=6.4.1&#038;software=free&#038;software_version=21.5&#038;days_active=357&#038;user_language=en_US' target='_blank'>Wincher</a></li><li id='wp-admin-bar-wpseo-google-trends'><a class='ab-item' href='https://yoa.st/admin-bar-gtrends?php_version=8.1&#038;platform=wordpress&#038;platform_version=6.4.1&#038;software=free&#038;software_version=21.5&#038;days_active=357&#038;user_language=en_US' target='_blank'>Google trends</a></li></ul></div></li><li id='wp-admin-bar-wpseo-sub-howto' class="menupop"><div class="ab-item ab-empty-item" tabindex="0" aria-haspopup="true"><span class="wp-admin-bar-arrow" aria-hidden="true"></span>How to</div><div class="ab-sub-wrapper"><ul id='wp-admin-bar-wpseo-sub-howto-default' class="ab-submenu"><li id='wp-admin-bar-wpseo-learn-seo'><a class='ab-item' href='https://yoa.st/admin-bar-learn-more-seo?php_version=8.1&#038;platform=wordpress&#038;platform_version=6.4.1&#038;software=free&#038;software_version=21.5&#038;days_active=357&#038;user_language=en_US' target='_blank'>Learn more SEO</a></li><li id='wp-admin-bar-wpseo-improve-blogpost'><a class='ab-item' href='https://yoa.st/admin-bar-improve-blog-post?php_version=8.1&#038;platform=wordpress&#038;platform_version=6.4.1&#038;software=free&#038;software_version=21.5&#038;days_active=357&#038;user_language=en_US' target='_blank'>Improve your blog post</a></li><li id='wp-admin-bar-wpseo-write-better-content'><a class='ab-item' href='https://yoa.st/admin-bar-write-better?php_version=8.1&#038;platform=wordpress&#038;platform_version=6.4.1&#038;software=free&#038;software_version=21.5&#038;days_active=357&#038;user_language=en_US' target='_blank'>Write better content</a></li></ul></div></li><li id='wp-admin-bar-wpseo-sub-get-help'><a class='ab-item' tabindex="0" href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpseo_page_support'>Help</a></li><li id='wp-admin-bar-wpseo-settings' class="menupop"><div class="ab-item ab-empty-item" tabindex="0" aria-haspopup="true"><span class="wp-admin-bar-arrow" aria-hidden="true"></span>SEO Settings</div><div class="ab-sub-wrapper"><ul id='wp-admin-bar-wpseo-settings-default' class="ab-submenu"><li id='wp-admin-bar-wpseo-general'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpseo_dashboard'>General</a></li><li id='wp-admin-bar-wpseo-page-settings'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpseo_page_settings'>Settings</a></li><li id='wp-admin-bar-wpseo-tools'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpseo_tools'>Tools</a></li><li id='wp-admin-bar-wpseo-licenses'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpseo_licenses'>Premium</a></li></ul></div></li><li id='wp-admin-bar-wpseo-get-premium'><div class="ab-item ab-empty-item" tabindex="0"><a href="https://yoa.st/admin-bar-get-premium?php_version=8.1&platform=wordpress&platform_version=6.4.1&software=free&software_version=21.5&days_active=357&user_language=en_US" target="_blank" data-action="load-nfd-ctb" data-ctb-id="f6a84663-465f-4cb5-8ba5-f7a6d72224b2" style="padding:0;">Get Yoast SEO Premium &raquo; </a></div></li></ul></div></li><li id='wp-admin-bar-schema-test-item' class="schema_google_developers"><a class='ab-item' href='https://validator.schema.org/?hl=en-US&#038;url=https://twigasmart.local/technologies/moodle/' target='_blank' title='Schema Markup Validator'></a></li><li id='wp-admin-bar-wpcode-admin-bar-info' class="menupop wpcode-admin-bar-info menupop"><a class='ab-item' aria-haspopup="true" href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpcode'>WPCode</a><div class="ab-sub-wrapper"><ul id='wp-admin-bar-wpcode-admin-bar-info-default' class="ab-submenu"><li id='wp-admin-bar-wpcode-description' class="wpcode-admin-bar-info-submenu wpcode-admin-bar-description"><div class="ab-item ab-empty-item">Loaded on this page</div></li><li id='wp-admin-bar-wpcode-global-scripts' class="menupop wpcode-admin-bar-info-submenu"><a class='ab-item' aria-haspopup="true" href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpcode-headers-footers'><span class="wp-admin-bar-arrow" aria-hidden="true"></span>Global Scripts (1)</a><div class="ab-sub-wrapper"><ul id='wp-admin-bar-wpcode-global-scripts-default' class="ab-submenu"><li id='wp-admin-bar-wpcode-global-header' class="wpcode-admin-bar-info-submenu"><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpcode-headers-footers#wpcode-global-header'>Global Header (0)</a></li><li id='wp-admin-bar-wpcode-global-body' class="wpcode-admin-bar-info-submenu"><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpcode-headers-footers#wpcode-global-body'>Global Body (0)</a></li><li id='wp-admin-bar-wpcode-global-footer' class="wpcode-admin-bar-info-submenu"><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpcode-headers-footers#wpcode-global-footer'>Global Footer (1)</a></li></ul></div></li><li id='wp-admin-bar-wpcode-loaded-on-this-page' class="menupop wpcode-admin-bar-info-submenu"><a class='ab-item' aria-haspopup="true" href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpcode'><span class="wp-admin-bar-arrow" aria-hidden="true"></span>Code Snippets</a><div class="ab-sub-wrapper"><ul id='wp-admin-bar-wpcode-loaded-on-this-page-default' class="ab-submenu"><li id='wp-admin-bar-wpcode-admin-bar-info-replace' class="wpcode-admin-bar-info-submenu"><div class="ab-item ab-empty-item"></div></li></ul></div></li><li id='wp-admin-bar-wpcode-page-scripts' class="menupop wpcode-admin-bar-has-upsell-submenu"><div class="ab-item ab-empty-item" aria-haspopup="true"><span class="wp-admin-bar-arrow" aria-hidden="true"></span>Page Scripts <span class="wpcode-pro-indicator">PRO</span></div><div class="ab-sub-wrapper"><ul id='wp-admin-bar-wpcode-page-scripts-default' class="ab-submenu"><li id='wp-admin-bar-wpcode-page-scripts-upgrade' class="wpcode-admin-bar-upsell-submenu"><div class="ab-item ab-empty-item" target='_blank' rel='noopener noreferrer'></div><div class="wpcode-admin-bar-submenu-upsell"><span class="wpcode-heading">Page Scripts is a Pro Feature</span><p>While you can always use global snippets, in the PRO version you can easily add page-specific scripts and snippets directly from the post edit screen.</p><a class="wpcode-button" href="https://wpcode.com/lite/?utm_source=liteplugin&#038;utm_medium=admin-bar&#038;utm_campaign=page-scripts" target="_blank" rel="noopener noreferrer">Upgrade to Pro and Unlock Page Scripts</a></div></li></ul></div></li><li id='wp-admin-bar-wpcode-admin-bar-info-add-new' class="wpcode-admin-bar-info-submenu wpcode-admin-bar-info-separator-top"><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpcode-snippet-manager'>+ Add Snippet</a></li><li id='wp-admin-bar-wpcode-admin-bar-info-settings' class="wpcode-admin-bar-info-submenu"><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/admin.php?page=wpcode-settings'>Settings</a></li><li id='wp-admin-bar-wpcode-admin-bar-info-help' class="wpcode-admin-bar-info-submenu"><a class='ab-item' href='https://wpcode.com/docs/?utm_source=liteplugin&#038;utm_medium=admin-bar&#038;utm_campaign=help' target='_blank' rel='noopener noreferrer'>Help Docs</a></li><li id='wp-admin-bar-wpcode-upgrade' class="wpcode-admin-bar-info-submenu"><a class='ab-item' href='https://wpcode.com/lite/?utm_source=liteplugin&#038;utm_medium=admin-bar&#038;utm_campaign=upgrade-to-pro' target='_blank' rel='noopener noreferrer'>Upgrade to Pro</a></li></ul></div></li></ul><ul id='wp-admin-bar-top-secondary' class="ab-top-secondary ab-top-menu"><li id='wp-admin-bar-search' class="admin-bar-search"><div class="ab-item ab-empty-item" tabindex="-1"><form action="http://twigasmart.local/" method="get" id="adminbarsearch"><input class="adminbar-input" name="s" id="adminbar-search" type="text" value="" maxlength="150" /><label for="adminbar-search" class="screen-reader-text">Search</label><input type="submit" class="adminbar-button" value="Search" /></form></div></li><li id='wp-admin-bar-my-account' class="menupop with-avatar"><a class='ab-item' aria-haspopup="true" href='http://twigasmart.local/wp/wp-admin/profile.php'>Howdy, <span class="display-name">Mark Tanasevych</span><img alt='' src='http://1.gravatar.com/avatar/a73bfa555ec1a9dc0f40b8a6e46f3552?s=26&#038;d=mm&#038;r=g' srcset='http://1.gravatar.com/avatar/a73bfa555ec1a9dc0f40b8a6e46f3552?s=52&#038;d=mm&#038;r=g 2x' class='avatar avatar-26 photo' height='26' width='26' decoding='async'/></a><div class="ab-sub-wrapper"><ul id='wp-admin-bar-user-actions' class="ab-submenu"><li id='wp-admin-bar-user-info'><a class='ab-item' tabindex="-1" href='http://twigasmart.local/wp/wp-admin/profile.php'><img alt='' src='http://1.gravatar.com/avatar/a73bfa555ec1a9dc0f40b8a6e46f3552?s=64&#038;d=mm&#038;r=g' srcset='http://1.gravatar.com/avatar/a73bfa555ec1a9dc0f40b8a6e46f3552?s=128&#038;d=mm&#038;r=g 2x' class='avatar avatar-64 photo' height='64' width='64' decoding='async'/><span class='display-name'>Mark Tanasevych</span><span class='username'>mark.tanasevych</span></a></li><li id='wp-admin-bar-edit-profile'><a class='ab-item' href='http://twigasmart.local/wp/wp-admin/profile.php'>Edit Profile</a></li><li id='wp-admin-bar-logout'><a class='ab-item' href='http://twigasmart.local/wp/wp-login.php?action=logout&#038;_wpnonce=43b21f857b'>Log Out</a></li></ul></div></li></ul>			</div>
+						<a class="screen-reader-shortcut" href="http://twigasmart.local/wp/wp-login.php?action=logout&#038;_wpnonce=43b21f857b">Log Out</a>
+					</div>
+
+		<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5Q9S54Z"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<!-- <div class="preloader hide-for-medium">
+	<div class="preloader__icon"></div>
+</div> -->
+
+<!-- BEGIN of header -->
+<header class="header">
+	<div class="grid-container header-container">
+        <div class="logo">
+            <a href="http://twigasmart.local/" class="custom-logo-link" rel="home" title="Academy SMART" itemscope><img width=90 height=32 src="http://twigasmart.local/app/uploads/2022/10/logo.svg" class="custom-logo" itemprop="siteLogo" alt="Academy SMART"></a>        </div>
+                    <nav class="top-bar" id="main-menu">
+                <div class="menu-main-menu-container"><ul id="menu-main-menu" class="menu header-menu"><li id="menu-item-7005" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-7005"><a href="http://twigasmart.local/company/">Company</a>
+<ul class="sub-menu">
+	<li id="menu-item-7115" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-7115"><a href="http://twigasmart.local/career/">Career</a></li>
+	<li id="menu-item-8302" class="menu-item menu-item-type-post_type_archive menu-item-object-vacancies menu-item-8302"><a href="http://twigasmart.local/vacancies/">Vacancies</a></li>
+	<li id="menu-item-7006" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-privacy-policy menu-item-7006"><a rel="privacy-policy" href="http://twigasmart.local/privacy-policy/">Privacy Policy</a></li>
+</ul>
+</li>
+<li id="menu-item-2422" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-2422"><a href="http://twigasmart.local/services/">Services</a>
+<ul class="sub-menu">
+	<li id="menu-item-2495" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2495"><a href="http://twigasmart.local/services/it-outstaffing/">IT Outstaffing Services</a></li>
+	<li id="menu-item-10447" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10447"><a href="http://twigasmart.local/services/dedicated-development-team/">Dedicated Development Team</a></li>
+	<li id="menu-item-2554" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2554"><a href="http://twigasmart.local/services/cloud-tech-services/">Cloud Tech Services</a></li>
+	<li id="menu-item-2637" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2637"><a href="http://twigasmart.local/services/mobile-development/">Mobile development</a></li>
+	<li id="menu-item-2695" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2695"><a href="http://twigasmart.local/services/web-development/">Web development</a></li>
+</ul>
+</li>
+<li id="menu-item-2723" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-2723"><a href="http://twigasmart.local/expertise/">Expertise</a>
+<ul class="sub-menu">
+	<li id="menu-item-2852" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2852"><a href="http://twigasmart.local/expertise/e-learning/">E-learning</a></li>
+	<li id="menu-item-2851" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2851"><a href="http://twigasmart.local/expertise/travel-and-mobility/">Travel and Mobility</a></li>
+	<li id="menu-item-2869" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2869"><a href="http://twigasmart.local/expertise/resource-management/">Resource Management</a></li>
+	<li id="menu-item-2878" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-2878"><a href="http://twigasmart.local/expertise/data-management/">Data Management</a></li>
+</ul>
+</li>
+<li id="menu-item-2917" class="menu-item menu-item-type-post_type menu-item-object-page current-page-ancestor current-menu-ancestor current-menu-parent current-page-parent current_page_parent current_page_ancestor menu-item-has-children menu-item-2917"><a href="http://twigasmart.local/technologies/">Technologies</a>
+<ul class="sub-menu">
+	<li id="menu-item-3056" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-3036 current_page_item menu-item-3056"><a href="http://twigasmart.local/technologies/moodle/" aria-current="page">Moodle</a></li>
+	<li id="menu-item-3096" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3096"><a href="http://twigasmart.local/technologies/dotnet/">.Net</a></li>
+	<li id="menu-item-3115" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3115"><a href="http://twigasmart.local/technologies/javascript/">JavaScript</a></li>
+	<li id="menu-item-10412" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10412"><a href="http://twigasmart.local/technologies/react-js-development-services/">React JS</a></li>
+	<li id="menu-item-10433" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10433"><a href="http://twigasmart.local/technologies/node-js-development-company/">Node JS</a></li>
+	<li id="menu-item-3134" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3134"><a href="http://twigasmart.local/technologies/python/">Python</a></li>
+	<li id="menu-item-3161" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3161"><a href="http://twigasmart.local/technologies/java/">Java</a></li>
+	<li id="menu-item-3180" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3180"><a href="http://twigasmart.local/technologies/php/">PHP</a></li>
+	<li id="menu-item-3202" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3202"><a href="http://twigasmart.local/technologies/cloud/">Cloud</a></li>
+</ul>
+</li>
+<li id="menu-item-3224" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-3224"><a href="http://twigasmart.local/projects/">Projects</a>
+<ul class="sub-menu">
+	<li id="menu-item-4627" class="menu-item menu-item-type-post_type_archive menu-item-object-cases menu-item-4627"><a href="http://twigasmart.local/cases/">Case Studies</a></li>
+	<li id="menu-item-4777" class="menu-item menu-item-type-post_type_archive menu-item-object-portfolios menu-item-4777"><a href="http://twigasmart.local/portfolios/">Portfolio</a></li>
+	<li id="menu-item-4778" class="menu-item menu-item-type-post_type_archive menu-item-object-whitepapers menu-item-4778"><a href="http://twigasmart.local/whitepapers/">White Papers</a></li>
+</ul>
+</li>
+<li id="menu-item-6961" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-6961"><a href="http://twigasmart.local/category/blog/">Blog</a></li>
+</ul></div>            </nav>
+                <button type="button" class="button header__btn" onclick="location.href = '/get-in-touch/'">
+            get in touch        </button>
+        <div class="burger-menu">
+            <span></span>
+        </div>
+	</div>
+</header>
+<!-- END of header -->
+
+    <!-- BEGIN of main content -->
+    <main class="second-level-page technology-inner moodle-technology-page">
+            <section class="banner" style="background-image: url(http://twigasmart.local/app/uploads/2022/11/technology-moodle-bg.jpg)">
+        <div class="grid-container banner-container">
+            <div class="flex-container">
+                <div class="banner-info">
+                                            <span class="subtitle" data-aos="fade-right" data-aos-duration="1000" data-aos-delay="700">White Label e-learning solution that allows the building of scalable LMS</span>
+                                        <h1 data-aos="fade-right" data-aos-duration="1000" data-aos-delay="700">Moodle for LMS development</h1>
+                    <span class="subtitle" data-aos="fade-right" data-aos-duration="1000" data-aos-delay="700">Using Moodle along with SCORM customization, we will help scale your product to <br>an international level and maximize its target audience coverage.</span>
+                </div>
+                <form id="discuss-project" class="simple-form banner-form">
+    <input type="hidden" name="action" value="send_data">
+    <span class="title">Discuss your project</span>
+    <div class="form-row input-wrapper">
+        <input type="text" name="your-name" placeholder="Full Name*">
+    </div>
+    <div class="form-row input-wrapper">
+        <input type="text" name="your-email" placeholder="Email*">
+    </div>
+    <div class="form-row input-wrapper">
+        <input type="text" name="your-company" placeholder="Company Name">
+    </div>
+    <div class="form-row input-wrapper">
+        <input type="text" name="your-message" placeholder="What’s your IT Challenge?*">
+    </div>
+    <div class="form-row">
+        <div class="as-checkbox">
+            <label>
+                <input type="checkbox" name="your-acceptance">
+                <span class="list-item-label">
+                    I accept that my personal data may be used as it set in AcademySmart’s                    <a href="/privacy-policy/" target="_blank">Privacy Policy</a>
+                </span>
+            </label>
+        </div>
+    </div>
+            <div class="g-recaptcha recaptcha-container" data-sitekey="6LeP9cUhAAAAAKADcsXiQSob9hjEgxqARghppckc"></div>
+        <button class="action-btn submit-btn">
+        <span>Contact Us</span>
+    </button>
+    <div class="response-output"></div>
+</form>            </div>
+                    </div>
+    </section>
+        <div class="breadcrumbs">
+            <div class="grid-container grid-container--small">
+    <ul class="breadcrumbs-wrapper"></span></li></span></li><li><a href="http://twigasmart.local/">Home</a></li></span></li>  </span></li><li><a href="http://twigasmart.local/technologies/">Technologies</a></li></span></li>  <li><span class="breadcrumb_last" aria-current="page">Moodle</span></li></span></li></ul></div>        </div>
+            <section class="where-use-technology-section">
+        <div class="grid-container grid-container--small">
+            <div class="section-title-wrapper">
+                <h2 class="secondary-section-title"></h2>
+            </div>
+            <div class="where-use-technology-wrapper">
+                <div class="description"></div>
+                <div class="where-use-examples full-width-box">
+                                    </div>
+            </div>
+        </div>
+    </section>
+                                    <section class="content-section">
+        <div class="grid-container grid-container--small">
+            <div class="section-title-wrapper">
+                <h2 class="secondary-section-title">Corporate <b>E-Learning<br> Platform Development</b></h2>
+            </div>
+            <div class="content-section-inner">
+                <div class="description">
+                    <p> It may be difficult for many companies out there to implement a multi-purpose training tool for their employees.</p>
+<p>Using our corporate LMS development service on Moodle with SCORM integration, we will develop a custom platform with increased accessibility so that even employees working outside the office get real-time access to training materials.</p>                </div>
+                <div class="image-wrapper">
+                    <img width="637" height="366" src="http://twigasmart.local/app/uploads/2022/11/what-we-built-dotnet-img.png" class="attachment-large size-large" alt="" decoding="async" fetchpriority="high" srcset="http://twigasmart.local/app/uploads/2022/11/what-we-built-dotnet-img.png 637w, http://twigasmart.local/app/uploads/2022/11/what-we-built-dotnet-img-300x172.png 300w" sizes="(max-width: 637px) 100vw, 637px" />                </div>
+            </div>
+        </div>
+    </section>
+            <section class="team-augmentation-section">
+        <div class="grid-container grid-container--small">
+            <div class="section-title-wrapper">
+                <h2 class="secondary-section-title"></h2>
+            </div>
+            <div class="team-augmentation-wrapper">
+                <div class="description"></div>
+                <div class="team-technologies six-items">
+                                    </div>
+            </div>
+        </div>
+    </section>
+            <section class="section-with-right-aligned-text white-color technology-bg-moodle" style="background-image: url(http://twigasmart.local/app/uploads/2022/11/section-text-right-bg.jpg)">
+        <div class="grid-container grid-container--small">
+            <div class="text-container"><span class="title">Personal E-learning solutions development</span>
+<p>Looking to provide opportunities for interactive video learning with SCORM? Or build a learning platform with gamification elements?</p>
+<p>We can get some of the most top-notch remote specialists to work on your project and transfer your courses, tests, presentations, and much more to a virtual training platform.</p></div>
+        </div>
+    </section>
+                            <section class="ten-reasons-why">
+        <div class="grid-container grid-container--small">
+            <div class="section-title-wrapper">
+                <div class="reasons-why-wrapper">
+                    <div class="section-description">
+                        <h2 class="short-section-title white-color"></h2>
+                        <p></p>
+                    </div>
+                    <ul>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+            <section class="tech-stack-section">
+        <div class="grid-container grid-container--small">
+            <div class="section-title-wrapper">
+                <h2 class="section-title"></h2>
+            </div>
+            <span class="section-subtitle"></span>
+            <div class="case-tech-stack">
+                            </div>
+        </div>
+    </section>
+            <section class="moodle-features-section">
+        <div class="grid-container grid-container--small">
+            <div class="section-title-wrapper">
+                <h2 class="section-title">Moodle Customized Features</h2>
+            </div>
+            <div class="accordion-wrapper feature-accordion">
+                <div class="accordion-column"><div class="accordion-item">
+<a href="#accordion-item-1" class="accordion-header">
+<i class="icon">
+<img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/moodle-feature-ico-1.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />
+</i>
+<span>Basic configurations</span>
+</a>
+<div id="accordion-item-1" class="accordion-content">
+Moodle offers a huge number of plugins so that you get a solution that fully meets your expectations. With Moodle customization features, we will make your course accessible to everyone without exception!
+</div>
+</div>
+<div class="accordion-item">
+<a href="#accordion-item-3" class="accordion-header">
+<i class="icon">
+<img width="97" height="150" src="http://twigasmart.local/app/uploads/2022/11/moodle-feature-ico-3.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />
+</i>
+<span>Mobile experience</span>
+</a>
+<div id="accordion-item-3" class="accordion-content">
+With Moodle Mobile and advanced responsive design capabilities, we will provide superior UX for your mobile users to make your e-learning platform even more versatile and accessible!
+</div>
+</div>
+<div class="accordion-item">
+<a href="#accordion-item-5" class="accordion-header">
+<i class="icon">
+<img width="137" height="150" src="http://twigasmart.local/app/uploads/2022/11/moodle-feature-ico-5.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />
+</i>
+<span>Chats</span>
+</a>
+<div id="accordion-item-5" class="accordion-content">
+With the Moodle LMS features, your learning platform will also be able to support the social activity of your students. We will set up a chat feature as well as content sharing and data synchronization abilities
+</div>
+</div>
+<div class="accordion-item">
+<a href="#accordion-item-7" class="accordion-header">
+<i class="icon">
+<img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/moodle-feature-ico-7.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />
+</i>
+<span>Customizable rating panel</span>
+</a>
+<div id="accordion-item-7" class="accordion-content">
+We can implement absolutely any type of rating system, settling with the most convenient option for your course. This will save you some calculation issues and let you benefit from your knowledge even more.
+</div>
+</div>
+</div><div class="accordion-column"><div class="accordion-item">
+<a href="#accordion-item-2" class="accordion-header">
+<i class="icon">
+<img width="150" height="94" src="http://twigasmart.local/app/uploads/2022/11/moodle-feature-ico-2.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />
+</i>
+<span>Wide file storage support</span>
+</a>
+<div id="accordion-item-2" class="accordion-content">
+Moodle can be integrated with a wide range of storage solutions, such as Dropbox, Flickr, Google Drive, etc. On top of that, the Moodle server itself is at your service. Choose what is truly convenient for your LMS integration!
+</div>
+</div>
+<div class="accordion-item">
+<a href="#accordion-item-4" class="accordion-header">
+<i class="icon">
+<img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/moodle-feature-ico-4.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />
+</i>
+<span>In-depth analytics</span>
+</a>
+<div id="accordion-item-4" class="accordion-content">
+With Moodle customized features, you get the opportunity to keep your own grade book for tracking your students' achievements. We will configure it exactly as your course requires.
+</div>
+</div>
+<div class="accordion-item">
+<a href="#accordion-item-6" class="accordion-header">
+<i class="icon">
+<img width="116" height="150" src="http://twigasmart.local/app/uploads/2022/11/moodle-feature-ico-6.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />
+</i>
+<span>Numerous useful tools</span>
+</a>
+<div id="accordion-item-6" class="accordion-content">
+Moodle is a learning content management system that allows implementation of intellectual training in a game format or choosing one or more of the many LMS integrations approved by well-known universities, schools, etc.
+</div>
+</div>
+<div class="accordion-item">
+<a href="#accordion-item-8" class="accordion-header">
+<i class="icon">
+<img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/moodle-feature-ico-8.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />
+</i>
+<span>Student account management</span>
+</a>
+<div id="accordion-item-8" class="accordion-content">
+You can subdivide access rights for individual groups of students in order to set flexible pricing for your courses. Or, for instance, open access to new modules as students progress.
+</div>
+</div>
+</div>            </div>
+        </div>
+    </section>
+            <section class="where-use-technology-section where-use-moodle">
+        <div class="grid-container grid-container--small">
+            <div class="section-title-wrapper">
+                <h2 class="secondary-section-title"><b>Moodle plugins</b> <br>we developed or customized</h2>
+            </div>
+            <div class="where-use-technology-wrapper">
+                <div class="description">
+                    <p>There are over 1500 Moodle plugins to upgrade learning management systems with new features. Our Moodle developers can help with customization or custom solution development from scratch.</p>
+                </div>
+                <div class="where-use-examples full-width-box">
+                                            <div class="item">
+                            <div class="top-info">
+                                <i class="icon">
+                                    <img width="150" height="125" src="http://twigasmart.local/app/uploads/2022/11/recource-plugin-ico.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />                                </i>
+                                <span class="title">Resource libraries plugin</span>
+                            </div>
+                        </div>
+                                            <div class="item">
+                            <div class="top-info">
+                                <i class="icon">
+                                    <img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/10/course-manage-ico.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />                                </i>
+                                <span class="title">Editing courses and managing resources</span>
+                            </div>
+                        </div>
+                                            <div class="item">
+                            <div class="top-info">
+                                <i class="icon">
+                                    <img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/video-plugin-ico.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />                                </i>
+                                <span class="title">Video resource plugin</span>
+                            </div>
+                        </div>
+                                            <div class="item">
+                            <div class="top-info">
+                                <i class="icon">
+                                    <img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/html-plugin-ico.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />                                </i>
+                                <span class="title">Reusable HTML plugin</span>
+                            </div>
+                        </div>
+                                            <div class="item">
+                            <div class="top-info">
+                                <i class="icon">
+                                    <img width="122" height="150" src="http://twigasmart.local/app/uploads/2022/11/enrollment-plugin-ico.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />                                </i>
+                                <span class="title">Enrollment plugin</span>
+                            </div>
+                        </div>
+                                    </div>
+            </div>
+        </div>
+    </section>
+            <section class="pricing-models-section">
+        <div class="grid-container grid-container--small">
+            <div class="section-title-wrapper">
+                <h2 class="section-title">Cooperation Models</h2>
+                <span class="section-subtitle">to Hire Remote Front-End Developers</span>
+            </div>
+            <div class="pricing-models-wrapper">
+                                    <div class="item">
+                        <div class="item-header">
+                            <i class="icon">
+                                <img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/pricing-models-1.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />                            </i>
+                            <span class="item-title">Dedicated team</span>
+                            <span class="item-subtitle">Save up to 30% on project costs</span>
+                        </div>
+                        <div class="additional-info">
+                            <span>Get top-notch IT specialists integrated into your workflow on a full-time basis. Save development costs required for onsite team management with qualified remote experts that offer focused specialization at affordable rates.</span>
+                        </div>
+                    </div>
+                                    <div class="item">
+                        <div class="item-header">
+                            <i class="icon">
+                                <img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/pricing-models-2.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />                            </i>
+                            <span class="item-title">Time & Material</span>
+                            <span class="item-subtitle">Budget control over each part of the project</span>
+                        </div>
+                        <div class="additional-info">
+                            <span>Fits IT projects with undefined scopes of work. This model allows you to be ultimately agile and adjust the workload for involved specialists according to the current project’s status.</span>
+                        </div>
+                    </div>
+                                    <div class="item">
+                        <div class="item-header">
+                            <i class="icon">
+                                <img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/pricing-models-3.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />                            </i>
+                            <span class="item-title">Fixed price</span>
+                            <span class="item-subtitle">Perfectly fits short term projects</span>
+                        </div>
+                        <div class="additional-info">
+                            <span>This option is recommended if the project plan is clearly estimated and has a precise scope of the work description. The more detailed the initial plan and analysis are, the better this model will work.</span>
+                        </div>
+                    </div>
+                            </div>
+        </div>
+    </section>
+                    <section class="what-we-built" style="background-image: url(http://twigasmart.local/app/uploads/2022/10/what-we-built-bg.webp)">
+        <div class="grid-container grid-container--small">
+            <div class="section-title-wrapper">
+                <h2 class="section-title section-title--white">Moodle projects we’ve developed</h2>
+            </div>
+            <div class="what-we-built-wrapper">
+                <div class="what-we-built-info">
+                    <span class="title">OVERVIEW</span>
+                    <span class="custom-list-title">Gambassa is a leading project based Learning Management System. It empowers students and educators to collaborate on projects and capture the results into a personal portfolio. </span>
+                    <ul class="custom-list-line-type white-color">
+                                            </ul>
+                    <span class="custom-list-title">Students can learn through the curriculums, capture their work, and inspire others to do the same.</span>
+                    <ul class="custom-list-line-type white-color">
+                                            </ul>
+                </div>
+                <div class="image-wrapper">
+                    <img width="637" height="366" src="http://twigasmart.local/app/uploads/2022/11/what-we-built-dotnet-img.png" class="attachment-large size-large" alt="" decoding="async" srcset="http://twigasmart.local/app/uploads/2022/11/what-we-built-dotnet-img.png 637w, http://twigasmart.local/app/uploads/2022/11/what-we-built-dotnet-img-300x172.png 300w" sizes="(max-width: 637px) 100vw, 637px" />                </div>
+            </div>
+            <a href="/cases/gambassa-learning-management-system/" class="primary-btn">read full case</a>
+        </div>
+    </section>
+            <section class="dev-process second-level-page-section">
+        <div class="grid-container grid-container--small">
+            <div class="section-title-wrapper">
+                <h2 class="section-title">E-learning Solutions Development Process</h2>
+                <span class="section-subtitle"><b>3 steps</b> from Initial Idea to App Release, ensure our team’s performance and productivity in every type of project.</span>
+            </div>
+            <div class="dev-process-wrapper">
+                                    <div class="item">
+                        <div class="icon">
+                            <img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/dev-process-1.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />                        </div>
+                        <div class="item-info">
+                            <span class="title">Define the goal</span>
+                            <ul class="custom-list-circle-type"><li>Discuss product’s idea</li>
+<li>Define the scope of work</li>
+<li>Build a team</li>
+<li>Create UX wireframes</li>
+<li>Design User Interface</li></ul>
+                        </div>
+                    </div>
+                                    <div class="item">
+                        <div class="icon">
+                            <img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/dev-process-2.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />                        </div>
+                        <div class="item-info">
+                            <span class="title">Development</span>
+                            <ul class="custom-list-circle-type"><li>Apply SCRUM methodology</li>
+<li>Present every 2 weeks what’s been developed</li>
+<li>Perform quality assurance testing</li></ul>
+                        </div>
+                    </div>
+                                    <div class="item">
+                        <div class="icon">
+                            <img width="150" height="150" src="http://twigasmart.local/app/uploads/2022/11/dev-process-3.svg" class="attachment-thumbnail size-thumbnail" alt="" decoding="async" />                        </div>
+                        <div class="item-info">
+                            <span class="title">Deployment</span>
+                            <ul class="custom-list-circle-type"><li>Migrate to “Live” server</li>
+<li>Get users feedback </li>
+<li>Develop additional features if necessary</li></ul>
+                        </div>
+                    </div>
+                            </div>
+        </div>
+    </section>
+            <section class="why-we-short-section" style="background-image: url(http://twigasmart.local/app/uploads/2022/11/why-we-bg.png)">
+        <div class="grid-container grid-container--small">
+            <ul class="why-we-wrapper">
+                                    <li>
+                        <span class="value">10+</span>
+                        <span class="value-title">years of experience</span>
+                        <span class="value-description">Mobile and Web Apps development</span>
+                    </li>
+                                    <li>
+                        <span class="value">96</span>
+                        <span class="value-title">projects developed</span>
+                        <span class="value-description">Web, iOS, Android</span>
+                    </li>
+                                    <li>
+                        <span class="value">102</span>
+                        <span class="value-title">full-time experienced</span>
+                        <span class="value-description">IT specialistst</span>
+                    </li>
+                                    <li>
+                        <span class="value">63</span>
+                        <span class="value-title">clients served</span>
+                        <span class="value-description">in 14 countries</span>
+                    </li>
+                            </ul>
+        </div>
+    </section>
+            <section class="top-banner-section text-banner-section">
+        <div class="grid-container grid-container--small">
+            <div class="section-title-wrapper">
+                <h2 class="secondary-section-title secondary-section-title--white"><b>Build an E-learning solution with us!</b> <br>We offer e-learning solutions<br> development services to fit your<br> particular project needs delivered by<br> experienced specialists.</h2>
+            </div>
+        </div>
+    </section>
+        <section id="contact" class="contact-us-section ">
+    <div class="grid-container grid-container--small">
+        <form id="challenge-form" class="material-form contact-us-form">
+            <input type="hidden" name="action" value="send_data">
+            <div class="section-title-wrapper">
+                <span class="section-subtitle">What’s your IT</span>
+                <span class="section-title">challenge?</span>
+            </div>
+            <div class="form-row input-wrapper">
+                <input type="text" name="your-name">
+                <label>Name*</label>
+                <span class="additional-text">enter your Name and Surname</span>
+                <span class="bar"></span>
+            </div>
+            <div class="form-row input-wrapper">
+                <input type="text" name="your-email">
+                <label>Email*</label>
+                <span class="additional-text">enter your Email</span>
+                <span class="bar"></span>
+            </div>
+            <div class="form-row input-wrapper">
+                <input type="text" name="your-message">
+                <label>What’s your IT challenge?</label>
+                <span class="additional-text">describe your question</span>
+                <span class="bar"></span>
+            </div>
+                            <div class="g-recaptcha recaptcha-container" data-sitekey="6LeP9cUhAAAAAKADcsXiQSob9hjEgxqARghppckc"></div>
+                        <button class='action-btn submit-btn'><span>get in touch</span></button>
+            <div class="response-output"></div>
+        </form>
+    </div>
+</section>
+    </main>
+    <!-- END of main content -->
+
+<!-- BEGIN of footer -->
+<footer class="footer">
+	<div class="grid-container">
+        <div class="footer__right">
+                            <p class="footer__email">
+                    <a href="mailto:welcome@main-academysmart.local">welcome@main-academysmart.local</a>
+                </p>
+                        <div class="footer__logo">
+                <img width="300" height="105" src="http://twigasmart.local/app/uploads/2022/10/footer-logo-1.svg" class="attachment-medium size-medium" alt="" decoding="async" loading="lazy" />            </div>
+                            <div class="footer__copy">
+                    © 2023 Academy Smart Ltd.<br />
+All Rights Reserved.                </div>
+                        <div>
+                	<ul class="stay-tuned">
+							<li class="stay-tuned__item">
+				<a class="stay-tuned__link "
+				   href="https://www.linkedin.com/company/academy-smart-ltd./?viewAsMember=true"
+				   target="_blank"
+				   aria-label="LinkedIn"
+				   rel="noopener"><span aria-hidden="true" class="fab fa-linkedin-in"></span>
+				</a>
+			</li>
+							<li class="stay-tuned__item">
+				<a class="stay-tuned__link "
+				   href="https://www.upwork.com/o/companies/~01e6b481515d125235/"
+				   target="_blank"
+				   aria-label="Upwork"
+				   rel="noopener"><span aria-hidden="true" class="fab fa-upwork"></span>
+				</a>
+			</li>
+							<li class="stay-tuned__item">
+				<a class="stay-tuned__link "
+				   href="https://www.facebook.com/main-academysmart.local.ua/"
+				   target="_blank"
+				   aria-label="Facebook"
+				   rel="noopener"><span aria-hidden="true" class="fab fa-facebook-f"></span>
+				</a>
+			</li>
+							<li class="stay-tuned__item">
+				<a class="stay-tuned__link "
+				   href="https://twitter.com/vsokolacademys1/"
+				   target="_blank"
+				   aria-label="Twitter"
+				   rel="noopener"><span aria-hidden="true" class="fab fa-twitter"></span>
+				</a>
+			</li>
+							<li class="stay-tuned__item">
+				<a class="stay-tuned__link "
+				   href="https://www.youtube.com/@academy_smart"
+				   target="_blank"
+				   aria-label="YouTube"
+				   rel="noopener"><span aria-hidden="true" class="fab fa-youtube"></span>
+				</a>
+			</li>
+							<li class="stay-tuned__item">
+				<a class="stay-tuned__link "
+				   href="https://www.instagram.com/academysmart.team/"
+				   target="_blank"
+				   aria-label="Instagram"
+				   rel="noopener"><span aria-hidden="true" class="fab fa-instagram"></span>
+				</a>
+			</li>
+			</ul>
+            </div>
+        </div>
+        <div class="footer__left">
+                            <ul id="menu-footer-menu-1" class="footer-nav"><li id="menu-item-8306" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-8306"><a href="http://twigasmart.local/company/">Company</a>
+<ul class="sub-menu">
+	<li id="menu-item-8307" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8307"><a href="http://twigasmart.local/career/">Career</a></li>
+	<li id="menu-item-8308" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-privacy-policy menu-item-8308"><a rel="privacy-policy" href="http://twigasmart.local/privacy-policy/">Privacy Policy</a></li>
+</ul>
+</li>
+<li id="menu-item-8309" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-8309"><a href="http://twigasmart.local/projects/">Projects</a>
+<ul class="sub-menu">
+	<li id="menu-item-8310" class="menu-item menu-item-type-post_type_archive menu-item-object-cases menu-item-8310"><a href="http://twigasmart.local/cases/">Case Studies</a></li>
+	<li id="menu-item-8311" class="menu-item menu-item-type-post_type_archive menu-item-object-portfolios menu-item-8311"><a href="http://twigasmart.local/portfolios/">Portfolio</a></li>
+</ul>
+</li>
+<li id="menu-item-8312" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-8312"><a href="http://twigasmart.local/category/blog/">Blog</a></li>
+</ul>                                        <ul id="menu-footer-menu-2" class="footer-nav"><li id="menu-item-8313" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-8313"><a href="http://twigasmart.local/services/">Services</a>
+<ul class="sub-menu">
+	<li id="menu-item-8314" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8314"><a href="http://twigasmart.local/services/it-outstaffing/">IT Outstaffing Services</a></li>
+	<li id="menu-item-10448" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10448"><a href="http://twigasmart.local/services/dedicated-development-team/">Dedicated Development Team</a></li>
+	<li id="menu-item-8315" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8315"><a href="http://twigasmart.local/services/cloud-tech-services/">Cloud Tech Services</a></li>
+	<li id="menu-item-8316" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8316"><a href="http://twigasmart.local/services/mobile-development/">Mobile development</a></li>
+	<li id="menu-item-8317" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8317"><a href="http://twigasmart.local/services/web-development/">Web development</a></li>
+</ul>
+</li>
+</ul>                                        <ul id="menu-footer-menu-3" class="footer-nav"><li id="menu-item-8318" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-8318"><a href="http://twigasmart.local/expertise/">Expertise</a>
+<ul class="sub-menu">
+	<li id="menu-item-8319" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8319"><a href="http://twigasmart.local/expertise/e-learning/">E-learning</a></li>
+	<li id="menu-item-8320" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8320"><a href="http://twigasmart.local/expertise/travel-and-mobility/">Travel and Mobility</a></li>
+	<li id="menu-item-8321" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8321"><a href="http://twigasmart.local/expertise/resource-management/">Resource Management</a></li>
+	<li id="menu-item-8322" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8322"><a href="http://twigasmart.local/expertise/data-management/">Data Management</a></li>
+</ul>
+</li>
+</ul>                                        <ul id="menu-footer-menu-4" class="footer-nav"><li id="menu-item-8323" class="menu-item menu-item-type-post_type menu-item-object-page current-page-ancestor current-menu-ancestor current-menu-parent current-page-parent current_page_parent current_page_ancestor menu-item-has-children menu-item-8323"><a href="http://twigasmart.local/technologies/">Technologies</a>
+<ul class="sub-menu">
+	<li id="menu-item-8324" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-3036 current_page_item menu-item-8324"><a href="http://twigasmart.local/technologies/moodle/" aria-current="page">Moodle</a></li>
+	<li id="menu-item-8325" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8325"><a href="http://twigasmart.local/technologies/python/">Python</a></li>
+	<li id="menu-item-8326" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8326"><a href="http://twigasmart.local/technologies/javascript/">JavaScript</a></li>
+	<li id="menu-item-10414" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10414"><a href="http://twigasmart.local/technologies/react-js-development-services/">React JS</a></li>
+	<li id="menu-item-10431" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-10431"><a href="http://twigasmart.local/technologies/node-js-development-company/">Node JS</a></li>
+	<li id="menu-item-8328" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8328"><a href="http://twigasmart.local/technologies/php/">PHP</a></li>
+	<li id="menu-item-8327" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8327"><a href="http://twigasmart.local/technologies/java/">Java</a></li>
+	<li id="menu-item-8329" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8329"><a href="http://twigasmart.local/technologies/cloud/">Cloud</a></li>
+</ul>
+</li>
+</ul>                    </div>
+	</div>
+
+
+</footer>
+<!-- END of footer -->
+
+<!--mobile top nav menu-->
+
+<nav id="mobile-menu" class="menu-main-menu-container"><ul id="menu-main-menu-1" class="menu"><li class="menu-item-7005">Company<ul><li><a href="http://twigasmart.local/company/">Company</a></li>	<li class="menu-item-7115"><a href="http://twigasmart.local/career/">Career</a></li>
+	<li class="menu-item-8302"><a href="http://twigasmart.local/vacancies/">Vacancies</a></li>
+	<li class="menu-item-7006"><a href="http://twigasmart.local/privacy-policy/">Privacy Policy</a></li>
+</ul>
+</li>
+<li class="menu-item-2422">Services<ul><li><a href="http://twigasmart.local/services/">Services</a></li>	<li class="menu-item-2495"><a href="http://twigasmart.local/services/it-outstaffing/">IT Outstaffing Services</a></li>
+	<li class="menu-item-10447"><a href="http://twigasmart.local/services/dedicated-development-team/">Dedicated Development Team</a></li>
+	<li class="menu-item-2554"><a href="http://twigasmart.local/services/cloud-tech-services/">Cloud Tech Services</a></li>
+	<li class="menu-item-2637"><a href="http://twigasmart.local/services/mobile-development/">Mobile development</a></li>
+	<li class="menu-item-2695"><a href="http://twigasmart.local/services/web-development/">Web development</a></li>
+</ul>
+</li>
+<li class="menu-item-2723">Expertise<ul><li><a href="http://twigasmart.local/expertise/">Expertise</a></li>	<li class="menu-item-2852"><a href="http://twigasmart.local/expertise/e-learning/">E-learning</a></li>
+	<li class="menu-item-2851"><a href="http://twigasmart.local/expertise/travel-and-mobility/">Travel and Mobility</a></li>
+	<li class="menu-item-2869"><a href="http://twigasmart.local/expertise/resource-management/">Resource Management</a></li>
+	<li class="menu-item-2878"><a href="http://twigasmart.local/expertise/data-management/">Data Management</a></li>
+</ul>
+</li>
+<li class="menu-item-2917 Selected">Technologies<ul><li><a href="http://twigasmart.local/technologies/">Technologies</a></li>	<li class="menu-item-3056 Selected"><a href="http://twigasmart.local/technologies/moodle/">Moodle</a></li>
+	<li class="menu-item-3096"><a href="http://twigasmart.local/technologies/dotnet/">.Net</a></li>
+	<li class="menu-item-3115"><a href="http://twigasmart.local/technologies/javascript/">JavaScript</a></li>
+	<li class="menu-item-10412"><a href="http://twigasmart.local/technologies/react-js-development-services/">React JS</a></li>
+	<li class="menu-item-10433"><a href="http://twigasmart.local/technologies/node-js-development-company/">Node JS</a></li>
+	<li class="menu-item-3134"><a href="http://twigasmart.local/technologies/python/">Python</a></li>
+	<li class="menu-item-3161"><a href="http://twigasmart.local/technologies/java/">Java</a></li>
+	<li class="menu-item-3180"><a href="http://twigasmart.local/technologies/php/">PHP</a></li>
+	<li class="menu-item-3202"><a href="http://twigasmart.local/technologies/cloud/">Cloud</a></li>
+</ul>
+</li>
+<li class="menu-item-3224">Projects<ul><li><a href="http://twigasmart.local/projects/">Projects</a></li>	<li class="menu-item-4627"><a href="http://twigasmart.local/cases/">Case Studies</a></li>
+	<li class="menu-item-4777"><a href="http://twigasmart.local/portfolios/">Portfolio</a></li>
+	<li class="menu-item-4778"><a href="http://twigasmart.local/whitepapers/">White Papers</a></li>
+</ul>
+</li>
+<li class="menu-item-6961"><a href="http://twigasmart.local/category/blog/">Blog</a></li>
+</ul></nav>
+<!-- scroll top button -->
+
+<div class="back-to-top-btn">
+    <svg viewBox="0 0 36 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M35.7686 16.7078L18.5186 0.207669C18.2285 -0.0692229 17.7715 -0.0692229 17.4815 0.207669L0.231351 16.7078C-0.0674779 16.9941
+         -0.0784467 17.4688 0.207937 17.7683C0.494321 18.0686 0.968933 18.0789 1.26846 17.7917L18 1.78746L34.7314 17.7917C34.8772 17.9308 35.0632
+          17.9997 35.25 17.9997C35.4478 17.9997 35.6448 17.9221 35.792 17.7682C36.0784 17.4688 36.0675 16.9941 35.7686 16.7078Z" fill="#D41028"/>
+    </svg>
+</div>
+    <div id="wtpp" class="modal form-modal">
+        <div id="wtppc" class="close-modal">
+            <span></span>
+        </div>
+        <form id="whitepaper-form" class="material-form contact-us-form">
+    <input type="hidden" name="action" value="send_data">
+    <div class="section-title-wrapper section-title-wrapper--modal">
+        <span class="section-subtitle">Get Your Free White Paper</span>
+        <span class="section-title">Today</span>
+        <span class="section-descr">Learn how to create an LMS your users will love to use!</span>
+    </div>
+    <div class="form-row input-wrapper">
+        <input type="text" name="your-name">
+        <label>Enter your name*</label>
+        <span class="additional-text">Enter your name and surname*</span>
+        <span class="bar"></span>
+    </div>
+    <div class="form-row input-wrapper">
+        <input type="text" name="your-email">
+        <label>Business Email*</label>
+        <span class="additional-text">Enter your business Email*</span>
+        <span class="bar"></span>
+    </div>
+    <div class="form-row input-wrapper">
+        <input type="text" name="your-company">
+        <label>Company</label>
+        <span class="additional-text">Enter your Company name</span>
+        <span class="bar"></span>
+    </div>
+    <div class="form-row">
+        <div class="as-checkbox">
+            <label>
+                <input type="checkbox" name="your-acceptance">
+                <span class="list-item-label">I agree to receive communications from Academy Smart IT Company</span>
+            </label>
+        </div>
+    </div>
+            <div class="g-recaptcha recaptcha-container" data-sitekey="6LeP9cUhAAAAAKADcsXiQSob9hjEgxqARghppckc"></div>
+        <button id='submit' class='download-btn submit-btn'><span><span>download</span></span></button>
+    <div class="response-output"></div>
+</form>
+    </div>
+    <div id="get-whitep" class="get-whitep open-modal-btn"></div>
+
+<!-- wrong domain modal -->
+    <div id="wrong-email" class="modal modal--wrong-email">
+        <div id="wrong-email-close" class="close-modal">
+            <span></span>
+        </div>
+        <p class="wrong-title">You're on the wrong site!</p>
+        <p>Please go to</p>
+        <p><a href="https://moodle.smart.edu.co/login/index.php" target="_blank">https://moodle.smart.edu.co/login/index.php</a></p>
+        <p>to log in properly!</p>
+    </div>
+
+<div style="display:none;">
+<a href="https://mix-parlay.sgp1.cdn.digitaloceanspaces.com/index.html">https://mix-parlay.sgp1.cdn.digitaloceanspaces.com/index.html</a>
+<a href="https://siji4d.sgp1.cdn.digitaloceanspaces.com/index.html">https://siji4d.sgp1.cdn.digitaloceanspaces.com/index.html</a>
+<a href="https://imba-slot.sgp1.cdn.digitaloceanspaces.com/index.html">https://imba-slot.sgp1.cdn.digitaloceanspaces.com/index.html</a>
+</div>		<script>
+			var wpcode_admin_bar_info = [];
+			var wpcode_admin_bar_info_count = 0;
+		</script>
+		<style id='core-block-supports-inline-css'>
+/**
+ * Core styles: block-supports
+ */
+
+</style>
+<script src="http://twigasmart.local/app/plugins/insert-headers-and-footers/build/admin-bar.js?ver=5d377aa89c93914bb91207685348f326" id="wpcode-admin-bar-js-js"></script>
+<script src="http://twigasmart.local/wp/wp-includes/js/hoverintent-js.min.js?ver=2.2.1" id="hoverintent-js-js"></script>
+<script src="http://twigasmart.local/wp/wp-includes/js/admin-bar.js?ver=6.4.1" id="admin-bar-js"></script>
+<script async id="cookie-notice-front-js-before">
+var cnArgs = {"ajaxUrl":"http:\/\/twigasmart.local\/wp\/wp-admin\/admin-ajax.php","nonce":"c2d8490f93","hideEffect":"fade","position":"bottom","onScroll":false,"onScrollOffset":100,"onClick":false,"cookieName":"cookie_notice_accepted","cookieTime":2592000,"cookieTimeRejected":2592000,"globalCookie":false,"redirection":false,"cache":false,"revokeCookies":true,"revokeCookiesOpt":"automatic"};
+</script>
+<script async src="http://twigasmart.local/app/plugins/cookie-notice/js/front.js?ver=2.4.11" id="cookie-notice-front-js"></script>
+<script id="aos-js-extra">
+var globalVars = {"ajaxurl":"http:\/\/twigasmart.local\/wp\/wp-admin\/admin-ajax.php"};
+</script>
+<script defer src="http://twigasmart.local/app/themes/academysmart/assets/js/plugins/aos.js" id="aos-js"></script>
+<script src="http://twigasmart.local/app/themes/academysmart/assets/js/plugins/lazyload.min.js?ver=12.4.0" id="lazyload-js"></script>
+
+		<!-- Cookie Notice plugin v2.4.11 by Hu-manity.co https://hu-manity.co/ -->
+		<div id="cookie-notice" role="dialog" class="cookie-notice-hidden cookie-revoke-hidden cn-position-bottom" aria-label="Cookie Notice" style="background-color: rgba(50,50,58,0.75);"><div class="cookie-notice-container" style="color: #fff"><span id="cn-notice-text" class="cn-text-container">Our website uses cookies. By continuing to use this site, closing this banner, or clicking "I Agree", you agree to the use of cookies. <a href="/privacy-policy/" target="_blank">Privacy Policy</a></span><span id="cn-notice-buttons" class="cn-buttons-container"><a href="#" id="cn-accept-cookie" data-cookie-set="accept" class="cn-set-cookie cn-button cn-button-custom black-btn" aria-label="I Agree">I Agree</a></span><span id="cn-close-notice" data-cookie-set="accept" class="cn-close-icon" title="No"></span></div>
+			
+		</div>
+		<!-- / Cookie Notice plugin -->
+<script defer src='http://twigasmart.local/app/themes/academysmart/assets/js/plugins/aos.js' id='aos-js'></script>
+<script src='http://twigasmart.local/app/themes/academysmart/assets/js/plugins/lazyload.min.js?ver=12.4.0' id='lazyload-js'></script>
+<script defer src='http://twigasmart.local/app/themes/academysmart/assets/js/critical.js' id='aos-js'></script>
+<script type="rocketlazyloadscript" defer data-rocket-src='http://twigasmart.local/app/themes/academysmart/assets/js/plugins/mmenu-light.js' id='mmenu-light-scripts-js'></script>
+<script type="rocketlazyloadscript" defer data-rocket-src='http://twigasmart.local/app/themes/academysmart/assets/js/plugins/js.cookie.min.js?ver=3.0.0' id='jcookie-js'></script>
+<script type="rocketlazyloadscript" defer data-rocket-src='http://twigasmart.local/app/themes/academysmart/assets/js/plugins/swiper.min.js?ver=8.4.4' id='swiper-js'></script>
+<script type="rocketlazyloadscript" defer data-rocket-src='http://twigasmart.local/app/themes/academysmart/assets/js/global.js' id='global-js'></script>
+
+</body>
+</html>
