@@ -14,7 +14,7 @@ class MainHtmlCacher{
 		register_activation_hook(__FILE__,array($this,'activate'));
 		if(!is_admin()){
 			foreach ($this->templates as $type) {
-				add_filter( "{$type}_template", array($this,'template_hierarchy'),10,3 );
+				add_filter( "{$type}_template", array($this,'template_hierarchy'),10,1 );
 			}
 		}
 	}
@@ -24,15 +24,15 @@ class MainHtmlCacher{
 			mkdir($upload_dir['basedir'].'/htmlcache');
 		}
 	}
-	public function template_hierarchy($template, $type, $templates){
+	public function template_hierarchy($template){
 		ob_start();
-		if(!empty($template)){
+		if( !empty($template) ){
 			$template_path = explode('/',$template);
 			$template_name = $template_path[count($template_path)-1];
 			$template_name = str_replace('.php','.html',$template_name);
 			$upload_dir   = wp_upload_dir();
 			$file_cache_path = $upload_dir['basedir'].'/htmlcache/'.$template_name;
-			if(!file_exists($file_cache_path)){
+			if( !file_exists($file_cache_path) ){
 				$f = fopen($file_cache_path,'w+');
 				ob_start();
 				require_once $template;
