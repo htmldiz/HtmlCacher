@@ -14,10 +14,8 @@ class MainHtmlCacher{
 		register_activation_hook(__FILE__,array($this,'activate'));
         add_action( 'wp_ajax_htmlcacher_clear', array($this,'htmlcacher_clear') );
         add_action('wp_enqueue_scripts', array($this,'admin_enqueue_scripts'),99999,1);
-        if(is_admin()){
-            add_action('admin_enqueue_scripts', array($this,'admin_enqueue_scripts'),99999,1);
-            add_action('admin_bar_menu', array($this,'admin_bar_menu'),99999,1);
-        }
+        add_action('admin_enqueue_scripts', array($this,'admin_enqueue_scripts'),99999,1);
+        add_action('admin_bar_menu', array($this,'admin_bar_menu'),99999,1);
 		if(!is_admin()){
 			foreach ($this->templates as $type) {
 				add_filter( "{$type}_template", array($this,'template_hierarchy'),10,1 );
@@ -39,7 +37,7 @@ class MainHtmlCacher{
         exit();
     }
     function admin_enqueue_scripts() {
-        wp_enqueue_script( 'htmlcacher', plugins_url( '/htmlcacher.js', __FILE__ ), array( 'jquery' ), '1.0', true );
+        wp_enqueue_script( 'htmlcacher', plugins_url( '/htmlcacher.js', __FILE__ ), array(  ), '1.0', true );
         wp_localize_script(
             'htmlcacher',
             'htmlcacher',
@@ -49,18 +47,16 @@ class MainHtmlCacher{
         );
     }
     function admin_bar_menu($wp_admin_bar) {
-        if(is_admin()){
-            $wp_admin_bar->add_menu( array(
-                'id'    => 'htmlcache-clear-total',
-                'parent' => null,
-                'group'  => null,
-                'title' => 'Remove Cache',
-                'href'  => admin_url('admin.php?page=htmlcache_clear_total'),
-                'meta' => [
-                    'title' => __( 'Menu Title', 'textdomain' ), //This title will show on hover
-                ]
-            ) );
-        }
+        $wp_admin_bar->add_menu( array(
+            'id'    => 'htmlcache-clear-total',
+            'parent' => null,
+            'group'  => null,
+            'title' => 'Remove Cache',
+            'href'  => admin_url('admin.php?page=htmlcache_clear_total'),
+            'meta' => [
+                'title' => __( 'Menu Title', 'textdomain' ), //This title will show on hover
+            ]
+        ) );
     }
 	public function activate(){
 		$upload_dir   = wp_upload_dir();
@@ -74,6 +70,10 @@ class MainHtmlCacher{
 			$template_name = $template_path[count($template_path)-1];
 			$template_name = str_replace('.php','.html',$template_name);
 			$upload_dir    = wp_upload_dir();
+            global $wp;
+            $url = $wp->request;
+            $template_name = $url.'.html';
+            $template_name = str_replace('/','-',$template_name);
 			$file_cache_path = $upload_dir['basedir'].'/htmlcache/'.$template_name;
             if(!current_user_can( 'edit_posts' )){
                 if( !file_exists($file_cache_path) ){
